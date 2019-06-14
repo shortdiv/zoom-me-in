@@ -1,7 +1,8 @@
 const { google } = require("googleapis");
 
 exports.handler = async event => {
-  const params = event.queryStringParameters;
+  let params = event.queryStringParameters;
+  params = JSON.parse(params);
   const code = params.code;
 
   let oAuth2Client, events;
