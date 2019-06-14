@@ -39,7 +39,7 @@ exports.handler = async event => {
 
   function listEvents(auth) {
     const calendar = google.calendar({ version: "v3", auth });
-    const calEvents = [];
+    // const calEvents = [];
     calendar.events.list(
       {
         calendarId: "primary",
@@ -51,19 +51,19 @@ exports.handler = async event => {
       (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
         const events = res.data.items;
-        if (events.length) {
-          console.log("Upcoming 10 events:");
-          events.map(event => {
-            const start = event.start.dateTime || event.start.date;
-            calEvents.push(event);
-            console.log(`${start} - ${event.summary}`);
-          });
-        } else {
-          console.log("No upcoming events found.");
-        }
+        // if (events.length) {
+        //   console.log("Upcoming 10 events:");
+        //   events.map(event => {
+        //     const start = event.start.dateTime || event.start.date;
+        //     calEvents.push(event);
+        //     console.log(`${start} - ${event.summary}`);
+        //   });
+        // } else {
+        //   console.log("No upcoming events found.");
+        // }
+        return events;
       }
     );
-    return calEvents;
   }
 
   return {
