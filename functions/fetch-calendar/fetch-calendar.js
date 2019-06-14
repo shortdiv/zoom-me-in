@@ -29,6 +29,11 @@ exports.handler = async event => {
       `${CLIENT_SECRET}`,
       `${REDIRECT_URIS}`
     );
+
+    oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      scope: ["https://www.googleapis.com/auth/calendar.readonly"]
+    });
     // oAuth2Client.getToken(code, (err, token) => {
     //   if (err) return console.error("Error retrieving access token", err);
     //   oAuth2Client.setCredentials(token);
