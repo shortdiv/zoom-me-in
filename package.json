@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "prebuild": "cd functions/fetch-calendar && npm i",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

@@ -1,0 +1,14 @@
+{
+  "name": "fetch-calendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fetch-calendar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Divya",
+  "license": "MIT",
+  "dependencies": {
+    "googleapis": "^40.0.0"
+  }
+}
