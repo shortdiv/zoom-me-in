@@ -7,7 +7,7 @@ exports.handler = async event => {
   let oAuth2Client, events;
 
   try {
-    events = getAccessToken(code, listEvents);
+    events = await getAccessToken(code, listEvents);
   } catch (e) {
     return {
       statusCode: 500,
