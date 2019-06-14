@@ -38,8 +38,9 @@ exports.handler = async event => {
   }
 
   function listEvents(auth) {
-    const calendar = google.calendar({ version: "v3", auth });
-    return calendar;
+    return auth;
+    // const calendar = google.calendar({ version: "v3", auth });
+    // return calendar;
     // const calEvents = [];
     // calendar.events.list(
     //   {
