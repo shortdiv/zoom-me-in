@@ -74,6 +74,6 @@ exports.handler = async event => {
       "Cache-Control": "no-cache",
       "Content-Type": "text/html"
     },
-    body: JSON.stringify({ events, code, params })
+    body: JSON.stringify({ events })
   };
 };
