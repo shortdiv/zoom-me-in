@@ -41,10 +41,11 @@ exports.handler = async () => {
     </head>
     <body>
       <a href="${redirectURL}">Click this link!</a>
+      <p>The OAuth Client is ${oAuth2Client}</p>
     </body>
     <script>
       //Do I need JS?
-      const oAuthClient = "${oAuth2Client}"
+      const oAuthClient = ${oAuth2Client}
     </script>
   </html>`;
 
@@ -73,13 +74,6 @@ exports.handler = async () => {
       `${REDIRECT_URIS}`
     );
     return getAccessToken(oAuth2Client);
-
-    // Check if we have previously stored a token.
-    // fs.readFile(TOKEN_PATH, (err, token) => {
-    //   if (err) return getAccessToken(oAuth2Client, callback);
-    //   oAuth2Client.setCredentials(JSON.parse(token));
-    //   callback(oAuth2Client);
-    // });
   }
 
   /**
@@ -95,22 +89,5 @@ exports.handler = async () => {
     });
 
     return authUrl;
-    // const rl = readline.createInterface({
-    //   input: process.stdin,
-    //   output: process.stdout,
-    // });
-    // rl.question('Enter the code from that page here: ', (code) => {
-    //   rl.close();
-    //   oAuth2Client.getToken(code, (err, token) => {
-    //     if (err) return console.error('Error retrieving access token', err);
-    //     oAuth2Client.setCredentials(token);
-    //     // Store the token to disk for later program executions
-    //     fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-    //       if (err) return console.error(err);
-    //       console.log('Token stored to', TOKEN_PATH);
-    //     });
-    //     callback(oAuth2Client);
-    //   });
-    // });
   }
 };
