@@ -1,11 +1,14 @@
 {
-  "name": "fetch-calendar",
+  "name": "google-auth",
   "version": "1.0.0",
   "description": "",
-  "main": "fetch-calendar.js",
+  "main": "google-auth.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Divya",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "googleapis": "^40.0.0"
+  }
 }

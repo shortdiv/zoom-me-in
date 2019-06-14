@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "prebuild": "cd functions/fetch-calendar && npm i",
+    "prebuild": "run-p 'fetchcal' 'googleauth'",
+    "fetchcal": "cd functions/fetch-calendar && npm i",
+    "googleauth": "cd functions/google-auth && npm i",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -22,6 +24,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "lint-staged": "^8.1.5",
     "node-sass": "^4.9.0",
+    "npm-run-all": "^4.1.5",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.10"
   },
