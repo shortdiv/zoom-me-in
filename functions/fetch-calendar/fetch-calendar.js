@@ -34,13 +34,12 @@ exports.handler = async event => {
       access_type: "offline",
       scope: ["https://www.googleapis.com/auth/calendar.readonly"]
     });
-    // oAuth2Client.getToken(code, (err, token) => {
-    //   if (err) return console.error("Error retrieving access token", err);
-    //   oAuth2Client.setCredentials(token);
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) return console.error("Error retrieving access token", err);
+      oAuth2Client.setCredentials(token);
 
-    //   return oAuth2Client;
-    // });
-    return { code, oAuth2Client };
+      return oAuth2Client;
+    });
   }
 
   return {
