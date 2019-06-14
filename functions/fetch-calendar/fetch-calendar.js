@@ -29,12 +29,13 @@ exports.handler = async event => {
       `${CLIENT_SECRET}`,
       `${REDIRECT_URIS}`
     );
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error("Error retrieving access token", err);
-      oAuth2Client.setCredentials(token);
+    // oAuth2Client.getToken(code, (err, token) => {
+    //   if (err) return console.error("Error retrieving access token", err);
+    //   oAuth2Client.setCredentials(token);
 
-      return oAuth2Client;
-    });
+    //   return oAuth2Client;
+    // });
+    return { code, oAuth2Client };
   }
 
   return {
