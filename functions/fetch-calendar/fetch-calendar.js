@@ -7,7 +7,7 @@ exports.handler = async event => {
   let oAuth2Client, events;
 
   try {
-    events = await getAccessToken(code, listEvents);
+    events = await getAccessToken(code);
   } catch (e) {
     return {
       statusCode: 500,
@@ -21,7 +21,7 @@ exports.handler = async event => {
     };
   }
 
-  function getAccessToken(code, callback) {
+  function getAccessToken(code) {
     const { CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS } = process.env;
 
     oAuth2Client = new google.auth.OAuth2(
@@ -33,39 +33,8 @@ exports.handler = async event => {
       if (err) return console.error("Error retrieving access token", err);
       oAuth2Client.setCredentials(token);
 
-      return callback(oAuth2Client);
+      return oAuth2Client;
     });
-  }
-
-  function listEvents(auth) {
-    return auth;
-    // const calendar = google.calendar({ version: "v3", auth });
-    // return calendar;
-    // const calEvents = [];
-    // calendar.events.list(
-    //   {
-    //     calendarId: "primary",
-    //     timeMin: new Date().toISOString(),
-    //     maxResults: 10,
-    //     singleEvents: true,
-    //     orderBy: "startTime"
-    //   },
-    //   (err, res) => {
-    //     if (err) return console.log("The API returned an error: " + err);
-    //     const events = res.data.items;
-    //     // if (events.length) {
-    //     //   console.log("Upcoming 10 events:");
-    //     //   events.map(event => {
-    //     //     const start = event.start.dateTime || event.start.date;
-    //     //     calEvents.push(event);
-    //     //     console.log(`${start} - ${event.summary}`);
-    //     //   });
-    //     // } else {
-    //     //   console.log("No upcoming events found.");
-    //     // }
-    //     return events;
-    //   }
-    // );
   }
 
   return {
