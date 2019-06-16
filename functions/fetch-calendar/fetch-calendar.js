@@ -8,7 +8,7 @@ exports.handler = async event => {
 
   try {
     const events = await getAccessToken(code);
-    console.log(events);
+    console.log("events", events);
   } catch (e) {
     return {
       statusCode: 500,
@@ -35,8 +35,7 @@ exports.handler = async event => {
       access_type: "offline",
       scope: ["https://www.googleapis.com/auth/calendar.readonly"]
     });
-    console.log(code);
-    return oAuth2Client;
+    return code;
     // oAuth2Client.getToken(code, (err, token) => {
     //   if (err) return console.error("Error retrieving access token", err);
     //   oAuth2Client.setCredentials(token);
