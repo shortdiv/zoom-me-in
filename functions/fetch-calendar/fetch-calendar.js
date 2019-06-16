@@ -48,6 +48,7 @@ exports.handler = async event => {
    */
   function listEvents(auth) {
     const calendar = google.calendar({ version: "v3", auth });
+    console.log(calendar);
     calendar.events.list(
       {
         calendarId: "primary",
@@ -59,6 +60,7 @@ exports.handler = async event => {
       (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
         const events = res.data.items;
+        console.log(events);
         if (events.length) {
           console.log("Upcoming 10 events:");
           events.map(event => {
