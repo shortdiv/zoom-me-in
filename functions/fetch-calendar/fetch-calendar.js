@@ -7,7 +7,7 @@ exports.handler = async event => {
   let oAuth2Client;
 
   try {
-    const events = await getAccessToken(code, listEvents);
+    const events = await getAccessToken(code);
     console.log(events);
   } catch (e) {
     return {
@@ -22,7 +22,7 @@ exports.handler = async event => {
     };
   }
 
-  function getAccessToken(code, callback) {
+  function getAccessToken(code) {
     const { CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS } = process.env;
 
     oAuth2Client = new google.auth.OAuth2(
@@ -35,44 +35,12 @@ exports.handler = async event => {
       access_type: "offline",
       scope: ["https://www.googleapis.com/auth/calendar.readonly"]
     });
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error("Error retrieving access token", err);
-      oAuth2Client.setCredentials(token);
-
-      callback(oAuth2Client);
-    });
-  }
-
-  /**
-   * Lists the next 10 events on the user's primary calendar.
-   * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
-   */
-  function listEvents(auth) {
-    const calendar = google.calendar({ version: "v3", auth });
-    console.log(calendar);
-    calendar.events.list(
-      {
-        calendarId: "primary",
-        timeMin: new Date().toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: "startTime"
-      },
-      (err, res) => {
-        if (err) return console.log("The API returned an error: " + err);
-        const events = res.data.items;
-        console.log(events);
-        if (events.length) {
-          console.log("Upcoming 10 events:");
-          events.map(event => {
-            const start = event.start.dateTime || event.start.date;
-            console.log(`${start} - ${event.summary}`);
-          });
-        } else {
-          console.log("No upcoming events found.");
-        }
-      }
-    );
+    console.log(code);
+    return oAuth2Client;
+    // oAuth2Client.getToken(code, (err, token) => {
+    //   if (err) return console.error("Error retrieving access token", err);
+    //   oAuth2Client.setCredentials(token);
+    // });
   }
 
   return {
@@ -83,6 +51,6 @@ exports.handler = async event => {
       "Cache-Control": "no-cache",
       "Content-Type": "text/html"
     },
-    body: JSON.stringify({ msg: "hello" })
+    body: JSON.stringify({ oAuth2Client, msg: "hello" })
   };
 };
