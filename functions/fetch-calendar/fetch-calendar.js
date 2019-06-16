@@ -4,10 +4,11 @@ exports.handler = async event => {
   let params = event.queryStringParameters;
   const code = params.code;
 
-  let oAuth2Client, events;
+  let oAuth2Client;
 
   try {
-    events = await getAccessToken(code, listEvents);
+    const events = await getAccessToken(code, listEvents);
+    console.log(events);
   } catch (e) {
     return {
       statusCode: 500,
@@ -82,6 +83,6 @@ exports.handler = async event => {
       "Cache-Control": "no-cache",
       "Content-Type": "text/html"
     },
-    body: JSON.stringify({ events, msg: "hello" })
+    body: JSON.stringify({ msg: "hello" })
   };
 };
