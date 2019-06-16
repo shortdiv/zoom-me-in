@@ -36,9 +36,9 @@ exports.handler = async event => {
     });
     oAuth2Client.getToken(code, (err, token) => {
       if (err) return console.error("Error retrieving access token", err);
-      oAuth2Client.setCredentials(token);
+      // oAuth2Client.setCredentials(token);
 
-      return oAuth2Client;
+      return token;
     });
   }
 
