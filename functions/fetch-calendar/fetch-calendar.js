@@ -43,7 +43,12 @@ exports.handler = async event => {
     // });
     console.log("i am a code ", code);
     console.log(oAuth2Client.getTokenAsync);
-    return { token: oAuth2Client.getToken, async: oAuth2Client.getTokenAsync };
+    return {
+      token: oAuth2Client.getToken,
+      async: oAuth2Client.getTokenAsync,
+      transporter: oAuth2Client.transporter.request,
+      url: oAuth2Client.GOOGLE_OAUTH2_TOKEN_URL_
+    };
   }
 
   return {
