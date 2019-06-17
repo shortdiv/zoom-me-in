@@ -41,6 +41,7 @@ exports.handler = async event => {
     //   //   oAuth2Client.setCredentials(token);
     // });
     console.log("i am a code ", code);
+    console.log(oAuth2Client.getTokenAsync);
     return oAuth2Client.getToken;
   }
 
