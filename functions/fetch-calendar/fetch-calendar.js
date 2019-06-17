@@ -8,10 +8,8 @@ exports.handler = async event => {
 
   try {
     const events = await getAccessToken(code);
-    console.log("events", events.token);
-    console.log("events", events.async);
-    console.log("transporter", events.transporter);
-    console.log("another event", events.url);
+    console.log("I AM A CONSOLE STATEMENT");
+    console.log("events", events);
   } catch (e) {
     return {
       statusCode: 500,
@@ -25,7 +23,7 @@ exports.handler = async event => {
     };
   }
 
-  function getAccessToken(code) {
+  async function getAccessToken(code) {
     const { CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS } = process.env;
 
     oAuth2Client = new google.auth.OAuth2(
@@ -38,19 +36,20 @@ exports.handler = async event => {
       access_type: "offline",
       scope: ["https://www.googleapis.com/auth/calendar.readonly"]
     });
-    // oAuth2Client.getToken(code, (err, token) => {
-    //   if (err) return console.error("Error retrieving access token", err);
-    //   return token;
-    //   //   oAuth2Client.setCredentials(token);
-    // });
+    const res = await oAuth2Client.getToken(code, (err, token) => {
+      if (err) return console.error("Error retrieving access token", err);
+      return token;
+      //   oAuth2Client.setCredentials(token);
+    });
     console.log("i am a code ", code);
     console.log(oAuth2Client.getTokenAsync);
-    return {
-      token: oAuth2Client.getToken,
-      async: oAuth2Client.getTokenAsync,
-      transporter: oAuth2Client.transporter.request,
-      url: oAuth2Client.GOOGLE_OAUTH2_TOKEN_URL_
-    };
+    return res;
+    // return {
+    //   token: oAuth2Client.getToken,
+    //   async: oAuth2Client.getTokenAsync,
+    //   transporter: oAuth2Client.transporter.request,
+    //   url: oAuth2Client.GOOGLE_OAUTH2_TOKEN_URL_
+    // };
   }
 
   return {
