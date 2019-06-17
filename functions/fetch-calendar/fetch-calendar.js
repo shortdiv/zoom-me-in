@@ -8,7 +8,8 @@ exports.handler = async event => {
 
   try {
     const events = await getAccessToken(code);
-    console.log("events", events);
+    console.log("events", events.token);
+    console.log("events", events.async);
   } catch (e) {
     return {
       statusCode: 500,
