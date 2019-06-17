@@ -10,6 +10,8 @@ exports.handler = async event => {
     const events = await getAccessToken(code);
     console.log("events", events.token);
     console.log("events", events.async);
+    console.log("transporter", events.transporter);
+    console.log("another event", events.url);
   } catch (e) {
     return {
       statusCode: 500,
