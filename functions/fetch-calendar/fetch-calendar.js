@@ -4,12 +4,10 @@ exports.handler = async event => {
   let params = event.queryStringParameters;
   const code = params.code;
 
-  let oAuth2Client;
+  let oAuth2Client, events;
 
   try {
-    const events = await getAccessToken(code);
-    console.log("I AM A CONSOLE STATEMENT");
-    console.log("events", events);
+    events = await getAccessToken(code, listEvents);
   } catch (e) {
     return {
       statusCode: 500,
@@ -23,7 +21,7 @@ exports.handler = async event => {
     };
   }
 
-  async function getAccessToken(code) {
+  async function getAccessToken(code, callback) {
     const { CLIENT_SECRET, CLIENT_ID, REDIRECT_URIS } = process.env;
 
     oAuth2Client = new google.auth.OAuth2(
@@ -32,24 +30,33 @@ exports.handler = async event => {
       `${REDIRECT_URIS}`
     );
 
-    oAuth2Client.generateAuthUrl({
-      access_type: "offline",
-      scope: ["https://www.googleapis.com/auth/calendar.readonly"]
-    });
-    const res = await oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error("Error retrieving access token", err);
-      return token;
-      //   oAuth2Client.setCredentials(token);
-    });
-    console.log("i am a code ", code);
-    console.log(oAuth2Client.getTokenAsync);
-    return res;
-    // return {
-    //   token: oAuth2Client.getToken,
-    //   async: oAuth2Client.getTokenAsync,
-    //   transporter: oAuth2Client.transporter.request,
-    //   url: oAuth2Client.GOOGLE_OAUTH2_TOKEN_URL_
-    // };
+    try {
+      let token = await oAuth2Client.getToken(code);
+      await oAuth2Client.setCredentials(token.tokens);
+      return callback(oAuth2Client);
+    } catch (e) {
+      return console.error("Error retrieving access token", e);
+    }
+  }
+
+  /**
+   * Lists the next 10 events on the user's primary calendar.
+   * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+   */
+  async function listEvents(auth) {
+    const calendar = google.calendar({ version: "v3", auth });
+    try {
+      const cal = await calendar.events.list({
+        calendarId: "primary",
+        timeMin: new Date().toISOString(),
+        maxResults: 10,
+        singleEvents: true,
+        orderBy: "startTime"
+      });
+      return cal.data.items;
+    } catch (e) {
+      return console.log("The API returned an error: " + e);
+    }
   }
 
   return {
@@ -60,6 +67,6 @@ exports.handler = async event => {
       "Cache-Control": "no-cache",
       "Content-Type": "text/html"
     },
-    body: JSON.stringify({ oAuth2Client, msg: "hello" })
+    body: JSON.stringify({ event: events, msg: "hello" })
   };
 };
