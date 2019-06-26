@@ -1,38 +1,68 @@
 <template>
-  <div class="hello">
-    <div v-if="!token">
-      <button @click="authenticate">Authenticate</button>
+  <BackgroundImage>
+    <div class="header">
+      <h1>Welcome {{ owner }}</h1>
+      <p>{{ time }}</p>
     </div>
-    <div v-if="events.length > 0">
-      <ul>
-        <li v-for="event in events" :key="event.id">
-          <h3>
-            {{ event.summary }}
-          </h3>
-          <p>
-            {{ event.description }}
-          </p>
-          <p>
-            {{ new Date(event.start.dateTime).toLocaleTimeString("en-US") }}
-          </p>
-          <a v-if="event.location" :href="event.location">Location </a>
-        </li>
-      </ul>
+    <div class="events-meta-wrapper">
+      <div v-if="!token">
+        <button @click="authenticate">Authenticate</button>
+      </div>
+      <div v-if="events.length > 0" class="events-list">
+        <ul>
+          <li v-for="event in sortEvents" :key="event.id">
+            <p>{{ eventTime(event.start.dateTime) }}</p>
+            <h3>{{ event.summary }}</h3>
+            <a
+              v-if="event.meeting.type === 'Zoom Meeting'"
+              :href="event.meeting.link"
+              class="events-location"
+            >
+              <img src="../../public/zoom-logo.jpg" alt />
+            </a>
+            <a
+              v-else-if="event.meeting.type === 'Hangouts Meet'"
+              :href="event.meeting.link"
+              class="events-location"
+            >
+              <img src="../../public/meet-logo.png" alt />
+            </a>
+            <a v-else href="#" class="events-location">
+              <img src="../../public/question-logo.png" alt />
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </BackgroundImage>
 </template>
 
 <script>
 import axios from "axios";
+import BackgroundImage from "./BackgroundImage.vue";
 
 export default {
   name: "HelloWorld",
+  components: {
+    BackgroundImage
+  },
   data() {
     return {
+      height: null,
+      width: null,
       url: null,
       token: null,
-      events: []
+      owner: null,
+      events: [],
+      time: null
     };
+  },
+  created() {
+    this.time = new Date().toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    setInterval(this.tick, 1000);
   },
   mounted() {
     if (window.location.search.indexOf("token") > -1) {
@@ -44,7 +74,55 @@ export default {
       });
     }
   },
+  computed: {
+    sortEvents() {
+      let calEvents = [];
+      this.events.map(event => {
+        let ev;
+        if (event.conferenceData) {
+          ev = {
+            meeting: {
+              type: event.conferenceData.conferenceSolution.name,
+              link: event.conferenceData.entryPoints[0].uri
+            },
+            ...event
+          };
+        } else if (event.location !== undefined) {
+          if (event.location.includes("zoom")) {
+            ev = {
+              meeting: {
+                type: "Zoom Meeting",
+                link: event.location
+              },
+              ...event
+            };
+          }
+        } else {
+          ev = {
+            meeting: {
+              type: undefined,
+              link: undefined
+            },
+            ...event
+          };
+        }
+        calEvents.push(ev);
+      });
+      console.log(calEvents);
+      debugger;
+      return calEvents;
+    }
+  },
   methods: {
+    eventTime(time) {
+      return new Date(time).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    },
+    tick() {
+      this.time = new Date().toLocaleTimeString();
+    },
     authenticate() {
       window.location.href = this.url;
     },
@@ -61,10 +139,9 @@ export default {
       start.setHours(0, 0, 0, 0);
       var end = new Date();
       end.setHours(23, 59, 59, 999);
-      //  singleEvents=true&timeMax=2019-06-21T06%3A59%3A59.999Z&timeMin=2019-06-20T07%3A00%3A00.000Z
       axios
         .get(
-          `https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&timeMax=${end.toISOString()}&timeMin=${start.toISOString()}`,
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&timeMax=${end.toISOString()}&timeMin=${start.toISOString()}&orderBy=startTime`,
           {
             headers: {
               Authorization: `Bearer ${this.token}`
@@ -73,10 +150,8 @@ export default {
         )
         .then(res => {
           console.log(res.data.items);
+          this.owner = res.data.summary.split("@")[0];
           this.events = res.data.items;
-          //  res.data.items.map(event => {
-          //    this.events.push({ })
-          //  })
         });
     }
   }
@@ -85,18 +160,59 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
+.header {
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  color: white;
+}
+.events-meta-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.events-location img {
+  width: 30px;
+  border-radius: 50%;
 }
 ul {
   list-style-type: none;
-  padding: 0;
+  padding: 0 2.3em;
+  margin: 0;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 1em 0;
+  &:not(:last-child) {
+    border-bottom: 1px solid #00000047;
+  }
 }
-a {
-  color: #42b983;
+h3 {
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 12em;
+}
+p {
+  margin: 0;
+}
+.events-list {
+  position: absolute;
+  background: #eeeeee;
+  border-radius: 4px;
+  width: 44.1%;
+}
+button {
+  position: relative;
+  cursor: pointer;
+  font-size: 1.5em;
+  padding: 0.5em 1em;
+  border-radius: 10px;
 }
 </style>
