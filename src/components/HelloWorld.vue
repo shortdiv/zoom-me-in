@@ -6,7 +6,7 @@
     </div>
     <div class="events-meta-wrapper">
       <div v-if="!token">
-        <button @click="authenticate">Authenticate</button>
+        <button @click="authenticate">Sign me in</button>
       </div>
       <div v-if="events.length > 0" class="events-list">
         <ul>
@@ -52,27 +52,10 @@ export default {
       width: null,
       url: null,
       token: null,
-      owner: null,
+      owner: "Guest",
       events: [],
       time: null
     };
-  },
-  created() {
-    this.time = new Date().toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-    setInterval(this.tick, 1000);
-  },
-  mounted() {
-    if (window.location.search.indexOf("token") > -1) {
-      this.token = this.geturlparams("token");
-      this.getCalendarEvents();
-    } else {
-      axios.get("/.netlify/functions/google-auth").then(res => {
-        this.url = res.data.redirectURL;
-      });
-    }
   },
   computed: {
     sortEvents() {
@@ -109,8 +92,24 @@ export default {
         calEvents.push(ev);
       });
       console.log(calEvents);
-      debugger;
       return calEvents;
+    }
+  },
+  created() {
+    this.time = new Date().toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    setInterval(this.tick, 1000);
+  },
+  mounted() {
+    if (window.location.search.indexOf("token") > -1) {
+      this.token = this.geturlparams("token");
+      this.getCalendarEvents();
+    } else {
+      axios.get("/.netlify/functions/google-auth").then(res => {
+        this.url = res.data.redirectURL;
+      });
     }
   },
   methods: {
