@@ -34,21 +34,6 @@ exports.handler = async () => {
     };
   }
 
-  const html = `
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-    </head>
-    <body>
-      <a href="${redirectURL}">Click this link!</a>
-      <p>The OAuth Client is ${oAuth2Client}</p>
-    </body>
-    <script>
-      //Do I need JS?
-      const oAuthClient = ${oAuth2Client}
-    </script>
-  </html>`;
-
   return {
     statusCode: 200,
     headers: {
@@ -57,7 +42,7 @@ exports.handler = async () => {
       "Cache-Control": "no-cache",
       "Content-Type": "text/html"
     },
-    body: html
+    body: JSON.stringify({ redirectURL })
   };
 
   /**
