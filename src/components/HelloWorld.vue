@@ -1,7 +1,7 @@
 <template>
   <BackgroundImage>
     <div class="header">
-      <h1>Welcome {{ owner }}</h1>
+      <h1>Servus {{ owner }}</h1>
       <p>{{ time }}</p>
     </div>
     <div class="events-meta-wrapper">
